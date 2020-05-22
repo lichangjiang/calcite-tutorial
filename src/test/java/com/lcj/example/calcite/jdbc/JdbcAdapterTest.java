@@ -90,7 +90,7 @@ public class JdbcAdapterTest {
                 String value = "null";
                 if (val != null)
                     value = val.toString();
-                sb.append("label:" + value);
+                sb.append(label + ":" + value);
                 if (i != count)
                     sb.append(" , ");
             }
