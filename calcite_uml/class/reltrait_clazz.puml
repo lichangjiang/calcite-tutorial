@@ -1,0 +1,114 @@
+@startuml
+interface RelTrait {
+    RelTraitDef getTraitDef();
+    int hashCode();
+    boolean equals(Object o);
+    boolean satisfies(RelTrait trait);
+    String toString();
+    void register(RelOptPlanner planner);
+    default <T extends RelTrait> T apply(Mappings.TargetMapping mapping)
+}
+
+note top of RelTrait
+    代表关系表达式特质的具体表现，由TraitDef定义。
+    比如CallingConvention.JAVA特质由ConventionTraitDef定义。
+    <color red>satisfies方法</color>:判断这个特质是否满足给定的特质。
+    一个特质满足另一个表示要么是相同的，要么更严格。
+    比如ORDER BY x,y满足ORDER BY x。
+    <color red>register方法</color>:将trait实例注册到planner
+    这是一个机会将与这个特质相关的rules添加到planner,通常实现中
+    这个方法什么都不做。
+end note
+
+interface Convention extends RelTrait {
+
+}
+
+note left of Convention
+    BindableConvention:返回Enumrable数组作为结果
+    关系表达式需要实现ArrayBindable
+    与EnumerableConvention不同的是不要求生成代码
+    EnumerableConvention:返回一个Enumerable作为结果
+    InterpretableConvention：返回Enumrable数组作为结果
+    与EnumerableConvention不同的是不要求生成代码
+end note
+
+interface RelMultipleTrait extends RelTrait {
+}
+
+note top of RelMultipleTrait
+    有多个值的关系表达式的特质
+    最通常的例子是排序
+end note
+
+
+interface RelCollation extends RelMultipleTrait {
+
+}
+
+note bottom of RelCollation
+    描述一个关系表达式的物理ordering
+    An ordering consists of a list
+    of one or more column ordinals
+    and the direction of the ordering
+end note
+
+interface RelDistribution extends RelMultipleTrait {
+}
+
+note right of RelDistribution
+    描述一个关系表达式的物理分
+end note
+
+enum BindableConvention implements Convention {
+}
+
+enum EnumerableConvention implements Convention {
+}
+
+enum InterpretableConvention implements Convention  {
+
+}
+
+abstract class RelTraitDef<T extends RelTrait> {
+    public abstract RelNode convert(RelOptPlanner planner,RelNode rel,T toTrait,boolean allowInfiniteCostConverters)
+}
+note top of RelTraitDef
+    代表RelTrait的class.
+    <color red>convert方法</color>将给定的RelNode转到给定的toTrait转成新的RelNode
+end note
+
+RelTraitDef --> RelTrait:定义
+
+class ConventionTraitDef extends RelTraitDef
+note bottom of ConventionTraitDef
+    convention特质的定义
+    一个planner会注册至少一个ConverterRule实例，会
+    创建一个新的convertion信息set.
+end note
+
+class RelCollationTraitDef extends RelTraitDef
+note bottom of RelCollationTraitDef
+    ordering trait的定义
+    ordering是物理属性，它可以不丢失信息的情况下改变
+    由Sort算子进行这个转换
+end note
+
+class RelDistributionTraitDef extends RelTraitDef
+note bottom of RelDistributionTraitDef
+    distribution特质的定义
+    Distribution是物理属性。由Exchange算子进行转换
+end note
+
+abstract class Sort extends SingleRel
+abstract class SingleRel implements RelNode
+
+Sort *--> RelCollation
+
+class RelTraitSet extends AbstractList {
+}
+
+abstract class AbstractRelNode implements RelNode
+AbstractRelNode *--> RelTraitSet
+RelTraitSet o--> RelTrait:有序集合
+@enduml

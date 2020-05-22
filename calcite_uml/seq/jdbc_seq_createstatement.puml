@@ -1,0 +1,12 @@
+@startuml
+Connection -> Connection:createStatement
+activate Connection
+Connection -> AvaticaConnection:createStatement
+AvaticaConnection -> CalciteConnectionImpl:createStatement
+CalciteConnectionImpl --> AvaticaConnection:super.createStatement
+AvaticaConnection -> CalciteJdbc41Factory:newStatement
+CalciteJdbc41Factory -> CalciteJdbc41Statement:new
+CalciteJdbc41Factory --> AvaticaConnection:return statement
+AvaticaConnection --> Connection:return statement
+deactivate Connection
+@enduml

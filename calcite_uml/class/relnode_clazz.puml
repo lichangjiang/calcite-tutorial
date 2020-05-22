@@ -1,0 +1,99 @@
+@startuml
+interface RelOptNode {
+}
+
+note top of RelOptNode
+    planner中的node
+end note
+
+interface RelNode {
+}
+
+note top of RelNode
+    一个RelNode是一个关系表达式.关系表达式用于处理数据,所以它们的名字都是动词:
+    比如Sort,Join,Project,Filter,Scan,Sample等
+    如果一类关系表达式有特殊的优化规则,它应该实现静态方法Abstract#register
+    一个关系表达式实现时候,系统会分配一个RelImplementor用于管理处理过程.每一个
+    可实现的关系表达式有一个RelTrainSet,描述它的物理属性.RelTrainSet空时包含一个
+    Converntion描述表达式如何把数据传给它的consuming关系表达式.
+    对于每一个calling-convention,都有一系列的RelNode的子接口,比如EnumerableRel有
+    管理EnumerableConvention这种calling-convention的图,而它又和EnumerableRelImplementor
+    交互.
+end note
+
+abstract class AbstractRelNode {
+}
+
+
+abstract class SingleRel {
+}
+
+note top of SingleRel
+    只有一个input的关系表达式的基础类
+end note
+
+abstract class Filter {
+}
+note top of Filter
+    迭代它的input,只返回condition计算为true的
+    元素
+end note
+
+abstract class Calc {
+}
+
+class LogicalCalc {
+}
+note top of LogicalCalc
+    用于计算project和filter表达式的关系表达式
+    这个关系表达式用于组合LogicalProject和LogicalFilter的功能
+end note
+
+class EnumerableCalc {
+}
+note top of EnumerableCalc
+    通过EnumerableConvention来实现Calc
+end note
+
+RelNode --> RelOptNode
+AbstractRelNode --> RelNode
+SingleRel --> AbstractRelNode
+Filter --> SingleRel
+Calc --> SingleRel
+LogicalCalc --> Calc
+EnumerableCalc --> Calc
+EnumerableCalc *--> EnumerableConvention
+
+
+interface RelTrait {
+}
+
+note top of RelTrait
+    RelTrait代表traitDef定义的关系表达式trait的manifestation.
+end note
+
+abstract class RelTraitDef<T extends RelTrait>{
+}
+note top of RelTraitDef
+    代表RelTrait的类
+end note
+
+
+interface Convention {
+}
+note top of Convention 
+    calling convention trait
+end note
+
+enum EnumerableConvention{
+}
+
+note top of EnumerableConvention
+    calling convention家族返回linq4j.Enumerable的结果
+end note
+
+RelTrait *--> RelTraitDef
+Convention --> RelTrait
+RelNode *--> Convention
+EnumerableConvention --> Convention
+@enduml

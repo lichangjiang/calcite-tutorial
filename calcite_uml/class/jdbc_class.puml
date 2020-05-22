@@ -1,0 +1,36 @@
+@startuml
+
+abstract class UnregisteredDriver implements java.sql.Driver
+note top of UnregisteredDriver
+    JDBC driver的实现，不会注册自己
+end note
+class Driver extends UnregisteredDriver
+note top of Driver
+    calcite jdbc driver
+end note
+
+
+interface CalciteConnection extends java.sql.Connection, org.apache.calcite.linq4j.QueryProvider
+
+abstract class AvaticaConnection implements java.sql.Connection
+note bottom of AvaticaConnection
+    avatica框架的jdbc connection实现
+end note
+
+abstract class CalciteConnectionImpl extends AvaticaConnection implements CalciteConnection,org.apache.calcite.linq4j.QueryProvider
+
+class CalciteJdbc41Connection extends CalciteConnectionImpl
+
+abstract class AvaticaStatement implements java.sql.Statement
+abstract class CalciteStatement extends AvaticaStatement
+class CalciteJdbc41Statement extends CalciteStatement
+
+abstract class AvaticaPreparedStatement extends AvaticaStatement implements java.sql.PreparedStatement, java.sql.ParameterMetaData
+
+abstract class CalcitePreparedStatement extends AvaticaPreparedStatement
+
+class CalciteJdbc41PreparedStatement extends CalcitePreparedStatement 
+
+
+class AvaticaResultSet extends ArrayFactoryImpl implements java.sql.ResultSet
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+
+interface RelNode {
+}
+
+abstract class AbstractRelNode implements RelNode {
+}
+
+abstract class SingleRel extends AbstractRelNode {
+}
+
+interface Converter extends RelNode {
+}
+
+note top of Converter
+    实现Converter的关系表达式表示它可以
+    将一个关系表达式的物理属性或者RelTrait从一个值
+    转换成另一个值
+end note
+
+abstract class ConverterImpl extends SingleRel implements Converter {
+}
+
+interface PhysicalNode extends RelNode {
+}
+
+interface EnumerableRel extends PhysicalNode {
+}
+
+note top of EnumerableRel
+    EnumerableConvention calling convention的关系表达式
+end note
+
+
+class JdbcToEnumerableConverter extends ConverterImpl implements EnumerableRel {
+}
+@enduml

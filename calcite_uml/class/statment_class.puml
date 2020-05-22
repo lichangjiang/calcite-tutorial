@@ -1,0 +1,24 @@
+@startuml
+
+interface jdbc.Statement {
+}
+
+abstract class AvaticaStatement {
+
+}
+
+abstract class CalciteStatement {
+
+}
+
+class CalciteJdbc41Statement {
+}
+
+AvaticaStatement --> jdbc.Statement
+
+AvaticaStatement <-- CalciteStatement
+
+CalciteStatement <-- CalciteJdbc41Statement
+
+
+@enduml

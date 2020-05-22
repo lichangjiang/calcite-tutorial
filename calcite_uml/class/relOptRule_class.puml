@@ -1,0 +1,59 @@
+@startuml
+
+
+abstract class RelOptRule {
+    +abstract void onMatch(RelOptRuleCall call);
+}
+note top of RelOptRule
+    将一个表达式转换到另一个
+    它拥有RelOptRuleOperand列表，用于
+    决定rule是否可用于树的特定部分
+    优化器决定哪些rule可以应用，然后
+    调用每个rule的onMatch方法
+    <color red>onMatch方法</color>在该方法被调用的时候，
+        RelOptRuleCall包含匹配这个rule的operands的关系表达式集合
+        call.rels[0]是根表达式。通常，rule会检查node是否合法匹配
+        创建一个新的表达式，然后回调RelOptRuleCall#transformTo
+        注册这个表达式。
+    
+end note
+
+class RelOptRuleOperand
+note top of RelOptRuleOperand
+    Operand决定一个RelOptRule是否可以用于特定的表达式
+end note
+RelOptRule *--> RelOptRuleOperand
+
+
+abstract class ConverterRule extends RelOptRule {
+    + ConverterRule(Class<? extends RelNode> clazz, RelTrait in,RelTrait out, String descriptionPrefix) 
+}
+note right of ConverterRule
+    将一个calling convention转换到另一个
+    而不改变语义的rule
+    <color red>构造函数</color>：clazz是考虑转换的关系表达式的类型
+        in是考虑转换的关系表达式的trait
+        out是被转成的trait
+end note
+
+
+class EnumerableSortRule extends ConverterRule {
+
+}
+
+note bottom of EnumerableSortRule
+    将Sort转换成一个EnumerableSort
+end note
+
+abstract class RelOptRuleCall {
+
+}
+note top of RelOptRuleCall
+    带有一组关系表达式作为参数的RelOptRule的调用
+end note
+
+class VolcanoRuleCall extends RelOptRuleCall
+class HepRuleCall extends RelOptRuleCall
+
+RelOptRule --> RelOptRuleCall:调用
+@enduml

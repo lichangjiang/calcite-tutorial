@@ -1,0 +1,37 @@
+@startuml
+
+interface RelTrait {
+}
+
+interface Convention extends RelTrait {
+}
+
+note top of Convention
+    calling convention trait
+    calling convention是特定数据引擎使用的协议。
+    同一种引擎的关系操作符之间相互连接不需要calling convention.
+    如果要将数据从一种calling convention转换成另一种
+    calcite使用converter。
+end note
+
+class Impl implements Convention {
+    - name String
+    - relClass Class<? extends RelNode>
+}
+
+note top of Impl
+    convention的默认实现
+end note
+
+class JdbcConvention extends Impl {
+
+}
+
+note bottom of JdbcConvention
+    JDBC的关系表达式操作使用的calling convention.
+    这是唯一的不是单例的convention。每个实例都包含一个JDBC schema。
+    转到这个convention或者从这个convention转到别的使用的converter rules
+    都需要实例化，在planner开始的时候。
+end note
+
+@enduml

@@ -1,0 +1,77 @@
+@startuml
+
+interface Node {
+}
+
+note top of Node
+    解析树节点
+end note
+
+abstract class AbstractNode implements Node {
+}
+
+abstract class Statement extends AbstractNode {
+}
+
+class BlockStatement extends Statement {
+    + statements: final List<Statement>
+}
+
+note bottom of BlockStatement
+    表示一个包含表达式序列的块，可以在其中定义变量。
+    相当于顺序写的代码块
+end note
+
+class BlockBuilder {
+    List<Statement> statements 
+    Set<String> variables
+    Map<Expression, DeclarationStatement> expressionForReuse 
+    - final boolean optimizing
+    - final BlockBuilder parent
+
+}
+
+note top of BlockBuilder
+    BlockStatement的builder
+    可以帮助保证变量名字唯一
+end note
+
+BlockBuilder --> BlockStatement : 生成
+
+class ConditionalStatement extends Statement {
+}
+
+class WhileStatement extends Statement {
+}
+
+class ForStatement extends Statement {
+}
+
+class SwitchStatement extends Statement {
+}
+
+class GotoStatement extends Statement {
+}
+
+class TryStatement extends Statement {
+}
+
+class ThrowStatement extends Statement {
+}
+
+class DeclarationStatement extends Statement {
+}
+
+note bottom of DeclarationStatement
+    声明和初始化变量的表达式
+    相当于在代码中声明变量
+end note
+
+
+class LabelStatement extends Statement {
+}
+note bottom of LabelStatement
+    代表的是程序中goto要用到的label
+end note
+
+@enduml

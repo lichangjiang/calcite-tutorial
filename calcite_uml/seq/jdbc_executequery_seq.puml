@@ -1,0 +1,68 @@
+@startuml
+    Statement -> AvaticaStatement:executeQuery
+    activate Statement
+        AvaticaStatement -> AvaticaStatement:executeInternal
+        activate AvaticaStatement
+            AvaticaStatement -> AvaticaConnection:prepareAndExecuteInternal
+            AvaticaConnection -> CalciteMetaImpl:prepareAndExecute
+            CalciteMetaImpl -> CalciteConnectionImpl:parseQuery
+            CalciteConnectionImpl -> CalcitePrepareImpl: prepareSql
+            CalcitePrepareImpl -> CalcitePrepareImpl:prepare_
+            note right of CalcitePrepareImpl
+                创建CalciteCatalogReader
+                创建VolvanoPlanner
+            end note
+            activate CalcitePrepareImpl
+            CalcitePrepareImpl -> CalcitePrepareImpl:prepare2_
+                activate CalcitePrepareImpl
+                note right of CalcitePrepareImpl
+                    创建CacitePreparingStmt
+                    创建SqlParser
+                    通过SqlParser将sql字符串解析为sqlNode
+                    创建SqlValidator
+                end note
+                CalcitePrepareImpl -> CalcitePreparingStmt:prepareSql
+                CalcitePreparingStmt -> Prepare:prepareSql
+                note right of Prepare
+                    创建sqlNode到RelNode转换SqlToRelConverter
+                    sqlToRelConverter.convertQuery转换并且验证
+                    进行优化，生成优化后的RelNode树
+                end note
+                Prepare -> CalcitePrepareImpl:implement(RelRoot)
+                note right of CalcitePrepareImpl
+                    生成EnumerableCalc这个RelNode，并且让它称为RelNode树的顶点
+                end note
+                CalcitePrepareImpl -> EnumerableRelImplementor:implementRoot(rel)
+                note right of EnumerableRelImplementor
+                    RelNode从上到下调用节点的implement方法
+                    比如调用EnumerableCalc的implemnt，EnumerableCalc会调用
+                    它的子节点的implement,一直下去直到叶子节点。
+                    生成EnumerableRel.Result，包含的生成的Linq4j执行计划代码块
+                    这里还没有开始执行实际的计划，只是生成Linq4j的执行计划
+                    最后生成ClassDeclaration相当于整个执行计划的代码Class定义完成
+                end note
+                EnumerableRelImplementor --> CalcitePrepareImpl:return ClassDecalaration
+                CalcitePrepareImpl -> EnumerableInterpretable:getBindable
+                note right of EnumerableInterpretable
+                    根据生成的Linq4j计划生成java代码，然后进行编译并且实例化
+                    这个生成的java类实现了Bindable接口，所以返回的实例可以是Bindable
+                end note
+                EnumerableInterpretable --> CalcitePrepareImpl:return bindable
+                CalcitePrepareImpl --> CalcitePrepareImpl:return CalciteSignature它带有bindable
+                deactivate CalcitePrepareImpl
+                CalcitePrepareImpl --> CalcitePrepareImpl:return CalciteSignature
+                CalcitePrepareImpl --> CalciteMetaImpl:return CalciteSignature
+                CalciteMetaImpl -> CalciteMetaImpl:call.assign生成statement的openResult为CalciteResult
+                CalciteMetaImpl -> CalciteMetaImpl:call.execute调用CalciteResultSet的execute方法
+                note right of CalciteMetaImpl
+                    最终会调用编译生成的bindable对象的bind方法,这就会执行之前编译的代码
+                    进行实际的jdbc数据库sql执行得到实际的ResultSet包裹在Enumerable对象中，并且返回该对象。
+                    Enumerable也是iterator.所以AvaticaResultSet可以迭代实际的ResultSet获取数据。
+                end note
+                CalciteMetaImpl --> AvaticaConnection:return MetaResultSet
+            deactivate CalcitePrepareImpl
+            AvaticaConnection --> AvaticaStatement:return
+        deactivate AvaticaStatement
+        AvaticaStatement --> Statement:return openResultSet
+    deactivate Statement
+@enduml

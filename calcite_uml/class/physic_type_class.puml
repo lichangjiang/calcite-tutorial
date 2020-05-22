@@ -1,0 +1,14 @@
+@startuml
+
+interface PhysType {
+}
+
+note top of PhysType
+    行的物理类型 
+    SQL行的类型可以通过getRowType方法获得，对应的java类型可以通过
+    getJavaRowType获得.包含生成表达式以访问字段，生成记录等的方法。
+    records封装如何将逻辑类型转换为物理类型
+end note
+
+
+@enduml

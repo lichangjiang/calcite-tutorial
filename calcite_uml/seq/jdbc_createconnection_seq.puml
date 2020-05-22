@@ -1,0 +1,14 @@
+@startuml
+    DriverManager -> DriverManager:getConnection
+    activate DriverManager
+    DriverManager -> Driver: connect
+    Driver -> CalciteJdbc41Factory:newConnection
+    CalciteJdbc41Factory -> CalciteJdbc41Connection:new
+    CalciteJdbc41Factory --> Driver:return connection
+    Driver -> Handler:onConnectionInit
+    Handler -> ModelHandler:new
+    ModelHandler -> ModelHandler:解析schema
+    Handler --> Driver
+    Driver --> DriverManager:return connection
+    deactivate DriverManager
+@enduml
