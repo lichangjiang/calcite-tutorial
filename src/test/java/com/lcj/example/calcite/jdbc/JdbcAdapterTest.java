@@ -9,7 +9,6 @@ import java.util.Properties;
 import java.util.function.Consumer;
 import com.lcj.example.calcite.TestUtil;
 import com.lcj.example.calcite.util.ResultSetFormatter;
-import org.apache.calcite.runtime.Hook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
