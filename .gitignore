@@ -42,3 +42,4 @@ target/
 *.swp
 *.lock
 *.log
+out/

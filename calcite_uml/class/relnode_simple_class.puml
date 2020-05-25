@@ -1,0 +1,76 @@
+@startuml
+
+interface RelNode {
+}
+
+
+abstract class AbstractRelNode implements RelNode {
+}
+
+
+abstract class SingleRel extends AbstractRelNode {
+}
+
+note top of SingleRel
+    只有一个input的关系表达式的基础类
+end note
+
+abstract class Filter extends SingleRel {
+}
+
+abstract class TableScan extends AbstractRelNode
+class LogicalTableScan extends TableScan
+class LogicalFilter extends Filter
+
+
+abstract class TableModify extends SingleRel
+class LogicalTableModify extends TableModify
+
+
+abstract class Values extends AbstractRelNode
+class LogicalValues extends Values
+
+
+abstract class Project extends SingleRel
+class LogicalProject extends Project
+
+
+abstract class Aggregate extends SingleRel
+class LogicalAggregate extends Aggregate
+
+
+abstract class BiRel extends AbstractRelNode
+note top of BiRel
+两个input的关系表达式基类
+end note
+
+abstract class Join extends BiRel
+class LogicalJoin extends Join
+
+
+abstract class Sort extends SingleRel
+class LogicalSort extends Sort
+
+
+abstract class SetOp extends AbstractRelNode
+note top of SetOp
+一组input的关系表达式的基类
+end note
+
+abstract class Union extends SetOp
+class LogicalUnion extends Union
+
+
+abstract class Intersect extends SetOp
+class LogicalIntersect extends Intersect
+
+abstract class Minus extends SetOp
+class LogicalMinus extends Minus
+
+
+abstract class Window extends SingleRel
+class LogicalWindow extends Window
+
+abstract class Match extends SingleRel
+class LogicalMatch extends Match
+@enduml
