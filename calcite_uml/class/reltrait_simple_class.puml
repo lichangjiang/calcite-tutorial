@@ -1,0 +1,20 @@
+@startuml
+abstract class 关系表达式节点.AbstractRelNode implements 关系表达式节点.RelNode {
+    # RelTraitSet traitSet
+}
+
+abstract class 关系表达式节点.SingleRel extends 关系表达式节点.AbstractRelNode
+abstract class 关系表达式节点.Sort extends 关系表达式节点.SingleRel
+
+
+interface RelTrait
+abstract class RelTraitDef<RelTrait>
+interface RelMultipleTrait extends RelTrait
+interface RelCollation extends RelMultipleTrait
+
+
+关系表达式节点.AbstractRelNode o--> RelTrait
+RelTraitDef --> RelTrait:代表RelTrait的class
+
+关系表达式节点.Sort *--> RelCollation
+@enduml

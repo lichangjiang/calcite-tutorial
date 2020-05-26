@@ -4,6 +4,8 @@ interface RelTrait {
 }
 
 interface Convention extends RelTrait {
+    Class getInterface();
+    String getName();
 }
 
 note top of Convention
@@ -34,4 +36,7 @@ note bottom of JdbcConvention
     都需要实例化，在planner开始的时候。
 end note
 
+enum EnumerableConvention implements Convention
+enum BindableConvention implements Convention
+enum InterpretableConvention implements Convention
 @enduml
