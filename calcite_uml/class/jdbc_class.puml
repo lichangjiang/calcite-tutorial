@@ -2,7 +2,7 @@
 
 abstract class UnregisteredDriver implements java.sql.Driver
 note top of UnregisteredDriver
-    JDBC driver的实现，不会注册自己
+    JDBC driver的实现,基于它可以叫容易实现一个JDBC Driver
 end note
 class Driver extends UnregisteredDriver
 note top of Driver
@@ -33,4 +33,5 @@ class CalciteJdbc41PreparedStatement extends CalcitePreparedStatement
 
 
 class AvaticaResultSet extends ArrayFactoryImpl implements java.sql.ResultSet
+class CalciteResultSet extends AvaticaResultSet
 @enduml

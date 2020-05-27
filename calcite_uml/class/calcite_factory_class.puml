@@ -1,0 +1,18 @@
+@startuml
+
+abstract class CalciteFactory implements AvaticaFactory
+class CalciteJdbc41Factory extends CalciteFactory
+
+class CalciteJdbc41Connection
+class CalciteJdbc41Statement
+class CalciteJdbc41PreparedStatement
+class CalciteJdbc41DatabaseMetaData
+Class CalciteResultSet
+
+CalciteJdbc41Factory --> CalciteJdbc41Connection: newConnection方法
+
+CalciteJdbc41Factory --> CalciteJdbc41DatabaseMetaData: newDatabaseMetaData方法
+CalciteJdbc41Factory --> CalciteJdbc41Statement: newStatement方法
+CalciteJdbc41Factory --> CalciteJdbc41PreparedStatement: newPreparedStatement
+CalciteJdbc41Factory --> CalciteResultSet: newResultSet方法
+@enduml

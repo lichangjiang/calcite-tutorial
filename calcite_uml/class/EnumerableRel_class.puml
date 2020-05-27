@@ -1,0 +1,17 @@
+@startuml
+
+
+interface PhysicalNode extends RelNode
+interface EnumerableRel extends PhysicalNode {
+    + Result implement(EnumerableRelImplementor implementor, Prefer pref)
+}
+
+class JdbcToEnumerableConverter implements EnumerableRel
+class EnumerableCalc  implements EnumerableRel
+
+class Result {
+    + final BlockStatement block
+}
+
+EnumerableRel --> Result:implement
+@enduml
