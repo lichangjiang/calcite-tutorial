@@ -1,0 +1,7 @@
+@startuml
+class CalciteResultSet
+CalciteResultSet *--> IteratrCursor
+IteratrCursor *--> AbstractEnumerable
+AbstractEnumerable *--> ResultSetEnumerator
+ResultSetEnumerator *--> ResultSet
+@enduml

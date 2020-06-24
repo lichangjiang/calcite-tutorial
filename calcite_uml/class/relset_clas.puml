@@ -1,0 +1,22 @@
+@startuml
+
+class RelSet {
+    # {field} final List<RelNode> parents = new ArrayList<>()
+    # {field} final List<RelSubset> subsets = new ArrayList<>()
+}
+
+note top of RelSet
+    相同语义的表达式集合。在RelSet中的表达式都有
+    相同的calling convention
+end note
+
+abstract class AbstractRelNode implements RelNode
+class RelSubset extends AbstractRelNode
+
+note bottom of RelSubset
+    相等类型的subset，这里的所有关系表达式都有相同的物理属性
+end note
+
+RelSet o--> RelSubset: subsets
+RelSubset *--> RelSet: set
+@enduml
